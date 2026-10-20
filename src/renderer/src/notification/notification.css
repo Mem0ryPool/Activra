@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+@import '../achievement/achievement.css';
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+  cursor: default;
+}

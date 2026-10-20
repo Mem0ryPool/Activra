@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 2,
+  "tasks": [
+    {
+      "id": "p5-001",
+      "title": "读完一本书",
+      "description": "第 3 章",
+      "createdAt": "2026-10-10T09:00:00.000Z",
+      "updatedAt": "2026-10-10T09:00:00.000Z",
+      "completedAt": "2026-10-10T09:00:00.000Z",
+      "status": "completed",
+      "timerConfig": null,
+      "themeOverride": "enhanced",
+      "recurrence": null,
+      "recurrenceHistory": [],
+      "skippedOccurrences": [],
+      "due": null,
+      "reminderMinutes": null
+    },
+    {
+      "id": "p5-002",
+      "title": "交报告",
+      "createdAt": "2026-10-10T09:00:00.000Z",
+      "updatedAt": "2026-10-13T09:00:00.000Z",
+      "completedAt": null,
+      "status": "active",
+      "timerConfig": null,
+      "recurrence": null,
+      "recurrenceHistory": [],
+      "skippedOccurrences": [],
+      "due": {
+        "date": "2026-10-20",
+        "time": "18:00"
+      },
+      "reminderMinutes": 60
+    },
+    {
+      "id": "p5-003",
+      "title": "背单词",
+      "createdAt": "2026-10-10T09:00:00.000Z",
+      "updatedAt": "2026-10-13T09:00:00.000Z",
+      "completedAt": null,
+      "status": "active",
+      "timerConfig": null,
+      "recurrence": {
+        "preset": "custom",
+        "unit": "week",
+        "interval": 1,
+        "weekdays": [
+          1,
+          3,
+          5
+        ],
+        "startDate": "2026-10-10",
+        "endDate": null
+      },
+      "recurrenceHistory": [
+        {
+          "rule": {
+            "preset": "daily",
+            "unit": "day",
+            "interval": 1,
+            "weekdays": [],
+            "startDate": "2026-10-10",
+            "endDate": null
+          },
+          "until": "2026-10-12"
+        }
+      ],
+      "skippedOccurrences": [
+        "2026-10-12"
+      ],
+      "due": null,
+      "reminderMinutes": null
+    }
+  ],
+  "completions": [
+    {
+      "id": "p5-004",
+      "taskId": "p5-001",
+      "occurrence": null,
+      "completedAt": "2026-10-10T09:00:00.000Z",
+      "undoneAt": null,
+      "title": "读完一本书"
+    },
+    {
+      "id": "p5-005",
+      "taskId": "p5-003",
+      "occurrence": "2026-10-10",
+      "completedAt": "2026-10-10T09:00:00.000Z",
+      "undoneAt": null,
+      "title": "背单词"
+    },
+    {
+      "id": "p5-006",
+      "taskId": "p5-003",
+      "occurrence": "2026-10-11",
+      "completedAt": "2026-10-11T09:00:00.000Z",
+      "undoneAt": "2026-10-11T09:00:00.000Z",
+      "title": "背单词"
+    },
+    {
+      "id": "p5-007",
+      "taskId": "p5-003",
+      "occurrence": "2026-10-11",
+      "completedAt": "2026-10-11T09:00:00.000Z",
+      "undoneAt": null,
+      "title": "背单词"
+    },
+    {
+      "id": "p5-008",
+      "taskId": "p5-002",
+      "occurrence": null,
+      "completedAt": "2026-10-13T09:00:00.000Z",
+      "undoneAt": "2026-10-13T09:00:00.000Z",
+      "title": "交报告"
+    }
+  ],
+  "settings": {
+    "language": "zh-CN",
+    "notificationDurationSec": 6,
+    "notificationVolume": 70,
+    "notificationPosition": "bottom-right",
+    "achievementTheme": "legendary",
+    "customTheme": {
+      "icon": "star",
+      "iconAssetId": null,
+      "accentColor": "#22c55e",
+      "sound": "chime",
+      "soundAssetId": null,
+      "animation": "burst",
+      "position": "bottom-right",
+      "durationSec": 6,
+      "volume": 70
+    },
+    "closeAction": "tray",
+    "appearance": "light",
+    "widget": {
+      "visible": true,
+      "alwaysOnTop": true,
+      "opacity": 80,
+      "shape": "rounded",
+      "animation": "fade",
+      "appearance": "dark"
+    },
+    "reminders": {
+      "enabled": true,
+      "defaultMinutes": 15,
+      "sound": true,
+      "allDayTime": "09:00"
+    }
+  }
+}

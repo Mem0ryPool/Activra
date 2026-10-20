@@ -1,0 +1,521 @@
+/*
+ * Achievement card, shared by the notification window (data-mode=live) and the
+ * Themes page previews (data-mode=static). Themes set colors; data-animation sets motion.
+ */
+
+.ach-wrap {
+  --accent: #f5b83d;
+  position: relative;
+  width: 400px;
+  max-width: 100%;
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+.ach-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 92px;
+  padding: 0 18px 0 16px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #151b25;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
+  color: #f9fafb;
+}
+
+.ach-icon {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, #0d1118);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.ach-icon-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+.ach-icon-ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.ach-text {
+  min-width: 0;
+  flex: 1;
+}
+.ach-heading {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+.ach-title {
+  margin: 3px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* A timed plan step: the name gives way, its position ("· 第2/4次") never does. */
+.ach-title-split {
+  display: flex;
+  min-width: 0;
+}
+.ach-title-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ach-title-suffix {
+  flex-shrink: 0;
+  white-space: pre;
+}
+/* A burst summary names several achievements: up to two lines, slightly smaller. */
+.ach-wrap[data-variant='summary'] .ach-title {
+  font-size: 13.5px;
+  line-height: 1.35;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+}
+
+.ach-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  transform-origin: left;
+  background: color-mix(in srgb, var(--accent) 60%, transparent);
+  animation: ach-progress var(--duration) linear both;
+}
+
+.ach-shimmer {
+  display: none;
+}
+
+/* ---------- Themes ---------- */
+
+[data-theme='classic'] .ach-card {
+  background: linear-gradient(180deg, #1c222c, #151a22);
+}
+[data-theme='classic'] .ach-heading {
+  color: #c9a24a;
+}
+
+[data-theme='enhanced'] .ach-card {
+  background: radial-gradient(120% 140% at 0% 50%, rgb(59 130 246 / 0.18), transparent 55%), #0e1626;
+  border-color: rgb(96 165 250 / 0.45);
+  box-shadow:
+    0 0 26px rgb(59 130 246 / 0.32),
+    0 10px 30px rgb(0 0 0 / 0.45);
+}
+[data-theme='enhanced'] .ach-heading {
+  color: #7db4ff;
+}
+[data-theme='enhanced'] .ach-icon {
+  color: #93c5fd;
+  box-shadow: 0 0 16px rgb(59 130 246 / 0.45);
+}
+[data-theme='enhanced'] .ach-icon-ring {
+  border: 2px solid rgb(147 197 253 / 0.8);
+}
+[data-theme='enhanced'] .ach-particles span {
+  background: #93c5fd;
+  box-shadow: 0 0 6px #60a5fa;
+}
+
+[data-theme='legendary'] .ach-card {
+  background: radial-gradient(130% 160% at 0% 50%, rgb(245 184 61 / 0.22), transparent 55%),
+    linear-gradient(135deg, #21190a, #120f0a 65%);
+  border-color: rgb(245 184 61 / 0.65);
+  box-shadow:
+    0 0 34px rgb(245 184 61 / 0.35),
+    0 10px 30px rgb(0 0 0 / 0.5);
+}
+[data-theme='legendary'] .ach-heading {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  background: linear-gradient(90deg, #ffe7a3, #f5b83d 50%, #ffd36b);
+  background-clip: text;
+  color: transparent;
+}
+[data-theme='legendary'] .ach-icon {
+  color: #2a1d05;
+  background: linear-gradient(160deg, #ffe08a, #f5b83d 55%, #c98a14);
+  border-color: #ffe7a3;
+  box-shadow: 0 0 20px rgb(245 184 61 / 0.6);
+}
+[data-theme='legendary'] .ach-icon-ring {
+  border: 2px solid #ffd36b;
+}
+[data-theme='legendary'] .ach-shimmer {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 236 179 / 0.28) 50%, transparent 65%);
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+[data-theme='legendary'] .ach-particles span {
+  background: #ffd36b;
+  box-shadow: 0 0 8px #f5b83d;
+}
+
+[data-theme='custom'] .ach-card {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--accent) 25%, transparent),
+    0 10px 30px rgb(0 0 0 / 0.45);
+}
+[data-theme='custom'] .ach-icon-ring {
+  border: 2px solid var(--accent);
+}
+[data-theme='custom'] .ach-particles span {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+/* ---------- Particles ---------- */
+
+.ach-particles {
+  position: absolute;
+  left: 44px; /* icon center */
+  top: 46px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.ach-particles span {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2);
+  border-radius: 50%;
+  opacity: 0;
+  animation-name: ach-particle;
+  animation-timing-function: cubic-bezier(0.15, 0.7, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+/* ---------- Motion (live only) ---------- */
+
+[data-mode='live'][data-animation='fade'] {
+  animation: ach-fade-in 450ms ease-out both;
+}
+[data-mode='live'][data-animation='slide'] {
+  animation: ach-slide-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+[data-mode='live'][data-animation='pop'] {
+  animation: ach-pop-in 520ms cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+}
+[data-mode='live'][data-animation='burst'] {
+  animation: ach-burst-in 650ms cubic-bezier(0.2, 0.9, 0.25, 1.1) both;
+}
+[data-mode='live'][data-animation='burst'] .ach-icon,
+[data-mode='live'][data-animation='pop'] .ach-icon {
+  animation: ach-icon-pop 600ms 140ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+[data-mode='live'] .ach-icon-ring {
+  animation: ach-ring 900ms 260ms ease-out both;
+}
+[data-theme='classic'][data-mode='live'] .ach-icon-ring {
+  animation: none;
+}
+[data-mode='live'] .ach-shimmer {
+  animation: ach-shimmer 1100ms 450ms ease-in-out both;
+}
+[data-mode='live'][data-leaving='true'] {
+  animation: ach-leave-right 320ms ease-in both;
+}
+[data-mode='live'][data-leaving='true'][data-side='left'] {
+  animation-name: ach-leave-left;
+}
+
+@keyframes ach-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes ach-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+}
+@keyframes ach-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(10px);
+  }
+}
+@keyframes ach-burst-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: brightness(1.8);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.03);
+    filter: brightness(1.25);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+@keyframes ach-icon-pop {
+  0% {
+    transform: scale(0.5) rotate(-12deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15) rotate(3deg);
+    opacity: 1;
+  }
+}
+@keyframes ach-ring {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+@keyframes ach-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes ach-particle {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.4);
+  }
+}
+@keyframes ach-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+@keyframes ach-leave-right {
+  to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
+@keyframes ach-leave-left {
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+/*
+ * A plan's "All achievements!": the user's theme stays as it is (colors, sound, motion); a gold frame,
+ * a small crown and one slow glow set it apart without extra particles or a longer stay.
+ */
+.ach-wrap[data-variant='plan'] .ach-card {
+  border-color: rgb(245 184 61 / 0.7);
+  box-shadow:
+    0 10px 30px rgb(0 0 0 / 0.45),
+    inset 0 0 0 1px rgb(245 184 61 / 0.25),
+    0 0 18px rgb(245 184 61 / 0.22);
+}
+.ach-wrap[data-variant='plan'] .ach-heading {
+  color: #f5b83d;
+}
+.ach-master-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #f5b83d;
+  color: #1a1305;
+  box-shadow: 0 0 0 2px #151b25;
+}
+.ach-wrap[data-variant='plan'][data-mode='live'] .ach-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgb(245 184 61 / 0.95);
+  pointer-events: none;
+  opacity: 0;
+  animation: ach-master-glow 1600ms ease-out 450ms 1;
+}
+@keyframes ach-master-glow {
+  30% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/*
+ * Habit feedback (Phase 6.6.1). The user's theme stays as it is (colors, sound, motion); a habit card
+ * only adds a frame, a small badge and one short glow, so it reads above a plain check-in and below a
+ * real unlock (the main process also caps its particles at 'light'). Every animation runs once.
+ */
+.ach-habit-badge {
+  background: var(--habit-color);
+}
+.ach-wrap[data-variant='habit-record'] {
+  --habit-color: #fb923c;
+}
+.ach-wrap[data-variant='habit-goal'] {
+  --habit-color: #f5b83d;
+}
+.ach-wrap[data-variant^='habit-'] .ach-card {
+  border-color: color-mix(in srgb, var(--habit-color) 70%, transparent);
+  box-shadow:
+    0 10px 30px rgb(0 0 0 / 0.45),
+    inset 0 0 0 1px color-mix(in srgb, var(--habit-color) 25%, transparent),
+    0 0 18px color-mix(in srgb, var(--habit-color) 22%, transparent);
+}
+.ach-wrap[data-variant^='habit-'] .ach-heading {
+  color: var(--habit-color);
+}
+/* Flame: a warm glow rises from the bottom edge once; the badge flickers a few times. */
+.ach-wrap[data-variant='habit-record'][data-mode='live'] .ach-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgb(251 146 60 / 0.32), rgb(239 68 68 / 0.1) 45%, transparent 75%);
+  opacity: 0;
+  animation: ach-flame-rise 1400ms ease-out 300ms 1;
+}
+.ach-wrap[data-variant='habit-record'][data-mode='live'] .ach-habit-badge {
+  animation: ach-flame-flicker 420ms ease-in-out 300ms 4 alternate;
+}
+@keyframes ach-flame-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(30%);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10%);
+  }
+}
+@keyframes ach-flame-flicker {
+  to {
+    transform: scale(1.18) rotate(-6deg);
+    box-shadow: 0 0 0 2px #151b25, 0 0 10px rgb(251 146 60 / 0.8);
+  }
+}
+/* Gold: the frame lights up once and a light sweep crosses the card. */
+.ach-wrap[data-variant='habit-goal'][data-mode='live'] .ach-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  border: 1px solid rgb(245 184 61 / 0.95);
+  background: linear-gradient(105deg, transparent 35%, rgb(245 184 61 / 0.22) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%;
+  opacity: 0;
+  animation: ach-gold-sweep 1600ms ease-out 400ms 1;
+}
+@keyframes ach-gold-sweep {
+  0% {
+    opacity: 0;
+    background-position: 100% 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    background-position: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ach-wrap,
+  .ach-wrap * {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+  .ach-particles {
+    display: none;
+  }
+}
+
+/* A plain habit check-in (Phase 6.6.2b): the theme's card at its quietest, a thin accent edge, no glow. */
+.ach-wrap[data-variant='habit-checkin'] .ach-card {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/*
+ * A habit goal met again after a cancel (Phase 6.6.2c): no celebration. Same quiet card as a plain
+ * check-in, a small check badge in the theme's accent, and one muted line saying the reward was
+ * already given this period.
+ */
+.ach-wrap[data-variant='habit-claimed'] .ach-card {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.ach-wrap[data-variant='habit-claimed'] .ach-habit-badge {
+  background: var(--accent);
+}
+
+/* The focus timer's end (Phase 6.7): the same quiet card, a small timer badge in the theme's accent. */
+.ach-wrap[data-variant='focus'] .ach-card {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.ach-wrap[data-variant='focus'] .ach-habit-badge {
+  background: var(--accent);
+}
+.ach-detail {
+  margin: 3px 0 0;
+  font-size: 12px;
+  line-height: 1.3;
+  color: rgb(249 250 251 / 0.62);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

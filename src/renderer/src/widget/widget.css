@@ -1,0 +1,71 @@
+@import '../styles.css';
+
+/*
+ * The window itself is transparent so rounded corners leave no black square behind;
+ * the panel paints an opaque background and the native window opacity does the rest.
+ */
+html,
+body {
+  background: transparent;
+}
+
+/* Show / hide transitions. Only opacity and transform, which the compositor handles cheaply. */
+.widget-root {
+  transition-property: opacity, transform;
+  transition-timing-function: ease-out;
+  transform-origin: 50% 0;
+}
+.widget-root[data-anim='fade'] {
+  transition-duration: 180ms;
+}
+.widget-root[data-anim='slide'] {
+  transition-duration: 220ms;
+}
+.widget-root[data-anim='scale'] {
+  transition-duration: 180ms;
+}
+.widget-root[data-anim='smooth'] {
+  transition-duration: 280ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.widget-root[data-phase='hidden']:not([data-anim='none']) {
+  opacity: 0;
+}
+.widget-root[data-phase='hidden'][data-anim='slide'] {
+  transform: translateY(14px);
+}
+.widget-root[data-phase='hidden'][data-anim='scale'] {
+  transform: scale(0.95);
+}
+.widget-root[data-phase='hidden'][data-anim='smooth'] {
+  transform: translateY(6px) scale(0.98);
+}
+
+/* Small state changes: a ticked box pops, a row that appears fades in. */
+@keyframes widget-check-pop {
+  from {
+    transform: scale(0.6);
+  }
+}
+@keyframes widget-row-in {
+  from {
+    opacity: 0;
+  }
+}
+.widget-root:not([data-anim='none']) .widget-check-done {
+  animation: widget-check-pop 160ms ease-out;
+}
+.widget-root:not([data-anim='none']) .widget-row {
+  animation: widget-row-in 160ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .widget-root,
+  .widget-root * {
+    transition: none !important;
+    animation: none !important;
+  }
+  .widget-root[data-phase='hidden'] {
+    transform: none !important;
+  }
+}

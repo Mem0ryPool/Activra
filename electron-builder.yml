@@ -1,0 +1,67 @@
+# Kept from Life Unlocked: the installer finds and upgrades the existing installation by this id.
+appId: app.lifeunlocked.desktop
+productName: Activra
+copyright: Copyright (c) 2026 Mem0ry
+directories:
+  buildResources: build
+  output: release/${version}
+files:
+  - out/**/*
+  - package.json
+  - THIRD_PARTY_NOTICES.md
+  - third_party_notices/**/*
+asar: true
+# Fails the build when app.asar lacks a page, a preload or the main entry (stale or partial out/).
+afterPack: scripts/verify-packaged-app.cjs
+# Never upload anything from a build: releases are published by hand only.
+publish: null
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch: [x64]
+  artifactName: Activra-Setup-${version}-x64.${ext}
+nsis:
+  oneClick: false
+  # Installs for the current user by default (no admin prompt); the installer offers "all users" too.
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Activra
+  uninstallDisplayName: Activra ${version}
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  # Tasks, settings and backups in %APPDATA%\Life Unlocked (the folder keeps that name, see
+  # src/main/dataDirectory.ts) stay after uninstalling and upgrading.
+  deleteAppDataOnUninstall: false
+  runAfterFinish: true
+# macOS release-candidate configuration: build and test the ARM64 DMG on a Mac before claiming an artifact.
+# Signing and notarization need an Apple Developer ID and are not configured. The data folder is
+# ~/Library/Application Support/Life Unlocked (src/main/dataDirectory.ts), the same rule as on Windows.
+mac:
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+  category: public.app-category.productivity
+  icon: build/icon.png
+  darkModeSupport: true
+  identity: null
+  artifactName: Activra-${version}-${arch}.${ext}
+# DMG window (built on a Mac): Activra background (build/dmg-background.png + @2x, joined into a Retina
+# TIFF by electron-builder), the app on the left and an Applications link on the right. The icon centers
+# match scripts/generate-dmg-assets.mjs, which also renders the volume icon build/icon.icns.
+dmg:
+  title: ${productName} ${version}
+  icon: build/icon.icns
+  background: build/dmg-background.png
+  iconSize: 96
+  iconTextSize: 13
+  contents:
+    - x: 140
+      y: 200
+      type: file
+    - x: 400
+      y: 200
+      type: link
+      path: /Applications
