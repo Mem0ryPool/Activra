@@ -7,7 +7,8 @@ The following are separate from the MIT-licensed code:
 - the Activra name, logo, and visual identity;
 - `src/renderer/src/assets/activra-icon.svg`;
 - derived icons under `build/`, `src/main/assets/app/`, and `src/main/assets/tray/`;
-- DMG backgrounds under `build/` that incorporate the Activra logo.
+- DMG backgrounds under `build/` that incorporate the Activra logo;
+- README hero images and screenshots under `docs/assets/`.
 
 ## Logo provenance
 
