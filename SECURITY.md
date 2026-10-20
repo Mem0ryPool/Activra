@@ -1,6 +1,6 @@
 # Security policy
 
-Activra `1.0.0-rc.3` is a release candidate. No public release is currently declared as supported.
+Activra [`1.0.0-rc.4`](https://github.com/Mem0ryPool/activra-desktop/releases/tag/v1.0.0-rc.4) is a Windows pre-release. No public release is currently declared as supported.
 
 ## Reporting a vulnerability
 
