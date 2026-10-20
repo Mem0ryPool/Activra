@@ -1,7 +1,7 @@
 {
   "name": "life-unlocked",
   "productName": "Activra",
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0-rc.4",
   "description": "Activra: Action · Progress · Achievement",
   "main": "./out/main/index.js",
   "author": "Mem0ry",

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
-import { app, BrowserWindow, dialog, globalShortcut, Menu, nativeTheme, Notification, powerMonitor, protocol, screen, shell } from 'electron'
+import { app, BrowserWindow, dialog, globalShortcut, Menu, nativeTheme, Notification, powerMonitor, protocol, safeStorage, screen, shell } from 'electron'
 import { resolveAppearance, type ResolvedAppearance } from '../shared/appearance'
 import { ASSET_SCHEME, resolveAchievementStyle, type AchievementStyle } from '../shared/themes'
 import { dayKey } from '../shared/dates'
@@ -19,6 +19,10 @@ import { CompletionBurst, summaryText } from './completionBurst'
 import { resolveUserDataDir } from './dataDirectory'
 import { registerIpcHandlers } from './ipc/registerHandlers'
 import { registerFocusHandlers } from './ipc/focusHandlers'
+import { registerAuthHandlers } from './ipc/authHandlers'
+import { AuthService } from './auth/authService'
+import { AuthSessionStore } from './auth/sessionStore'
+import { DevelopmentOtpProvider } from './auth/developmentOtpProvider'
 import { FocusService } from './focus/focusService'
 import { FocusStore } from './focus/focusStore'
 import { registerShortcutHandlers } from './ipc/shortcutHandlers'
@@ -405,6 +409,27 @@ async function bootstrap(): Promise<void> {
   powerMonitor.on('resume', () => void focusService.noteResume())
   powerMonitor.on('unlock-screen', () => void focusService.noteResume())
   app.on('before-quit', () => focusService.stop())
+
+  // Optional sign-in (Phase 5C). Nothing here runs at startup: the session file is read when the
+  // Settings page asks. Hosted Supabase is not configured yet, so installed builds are guest-only; a
+  // development run gets the local mock (no email is sent). A failure never blocks the app.
+  let devOtp: DevelopmentOtpProvider | null = null
+  if (!app.isPackaged) {
+    try {
+      devOtp = new DevelopmentOtpProvider()
+    } catch {
+      devOtp = null
+    }
+  }
+  registerAuthHandlers({
+    auth: new AuthService({
+      mode: devOtp ? 'development-mock' : 'unavailable',
+      provider: devOtp,
+      sessions: new AuthSessionStore(userData, safeStorage),
+      takeDevelopmentCode: () => devOtp?.delivery.takeAll().at(-1)?.token
+    }),
+    isMainWindow: (sender) => !!mainWindow && !mainWindow.isDestroyed() && sender === mainWindow.webContents
+  })
 
   closeAction = () => store.getSettings().closeAction
   const setWidget = (patch: Partial<Settings['widget']>): void => {

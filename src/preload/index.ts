@@ -70,6 +70,13 @@ const api: LifeUnlockedApi = {
   window: {
     setModalOpen: (open) => ipcRenderer.invoke(IpcChannels.windowSetModalOpen, open)
   },
+  auth: {
+    status: () => ipcRenderer.invoke(IpcChannels.authStatus),
+    requestCode: (email) => ipcRenderer.invoke(IpcChannels.authRequestCode, email),
+    verifyCode: (code) => ipcRenderer.invoke(IpcChannels.authVerifyCode, code),
+    cancel: () => ipcRenderer.invoke(IpcChannels.authCancel),
+    signOut: () => ipcRenderer.invoke(IpcChannels.authSignOut)
+  },
   achievements: {
     test: (themeId) => ipcRenderer.invoke(IpcChannels.achievementsTest, themeId),
     importAsset: (kind) => ipcRenderer.invoke(IpcChannels.assetsImport, kind)
