@@ -16,6 +16,7 @@ qa-temp/
 # Legacy fixture copies are replaced by deterministic runtime-generated media.
 tests/e2e/fixtures/custom-icon.png
 tests/e2e/fixtures/custom-sound.wav
+supabase/.temp/
 
 # User data, logs, caches, secrets
 *.log

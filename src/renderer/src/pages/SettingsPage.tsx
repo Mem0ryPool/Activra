@@ -11,6 +11,7 @@ import {
 } from '../../../shared/widget'
 import { POSITIONS, type NotificationPosition } from '../../../shared/themes'
 import type { CloseAction, LanguageSetting, ReminderSettings, WidgetSettings } from '../../../shared/types'
+import { AccountSection } from '../components/AccountSection'
 import { Button } from '../components/Button'
 import { PageHeader } from '../components/PageHeader'
 import { RangeSetting, Row, Section, Select, Toggle } from '../components/SettingsRows'
@@ -204,6 +205,8 @@ export function SettingsPage(): React.JSX.Element {
               />
             </Row>
           </Section>
+
+          <AccountSection />
 
           <Section title={t('settings.data')}>
             <Row label={t('settings.dataLocation')} hint={appInfo?.dataDirectory}>

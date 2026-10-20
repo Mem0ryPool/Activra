@@ -1,8 +1,8 @@
 # macOS compatibility (preparation)
 
 Status: an earlier ARM64 development build was reported running on a real Mac, but no DMG from the
-1.0.0-rc.3 release-candidate commit has been built or verified on macOS. A real-Mac build and manual
-acceptance pass are still required before a macOS release.
+1.0.0-rc.4 preparation source has been built or verified on macOS. No final RC4 freeze commit exists yet. A real-Mac
+build and manual acceptance pass are still required before a macOS release.
 
 ## Already in place
 

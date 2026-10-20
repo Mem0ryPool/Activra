@@ -3,6 +3,7 @@ import type { Plan, PlanInput } from './planner/types'
 import type { Habit, HabitAction, HabitCheckinResult, HabitInput, HabitPatch, HabitUndoResult } from './habits/types'
 import type { FocusDurations, FocusPhase, FocusSelection, FocusSnapshot, PlanFocusInput, PlanFocusStart } from './focus/types'
 import type { ShortcutChange, ShortcutStatus } from './shortcut'
+import type { AuthRequestResult, AuthStatus, AuthVerifyResult } from './auth'
 import type {
   AchievementPayload,
   AssetKind,
@@ -84,7 +85,13 @@ export const IpcChannels = {
   widgetEnter: 'widget:enter',
   /** Main → widget: play the hide transition; the window closes right after. */
   widgetExit: 'widget:exit',
-  widgetOpenMain: 'widget:open-main'
+  widgetOpenMain: 'widget:open-main',
+  /** Optional sign-in (Phase 5C): main window only; answers carry no token. */
+  authStatus: 'auth:status',
+  authRequestCode: 'auth:request-code',
+  authVerifyCode: 'auth:verify-code',
+  authCancel: 'auth:cancel',
+  authSignOut: 'auth:sign-out'
 } as const
 
 /** API exposed to the main window as `window.lifeUnlocked`. */
@@ -173,6 +180,18 @@ export interface LifeUnlockedApi {
   window: {
     /** Tells the main process whether a modal dialog is open, so it can dim the native title bar buttons. */
     setModalOpen(open: boolean): Promise<void>
+  }
+  /**
+   * Optional email sign-in (Phase 5C). The main process holds the session; the page only ever sees the
+   * state and the email. Signing in never uploads, merges or changes local data.
+   */
+  auth: {
+    status(): Promise<AuthStatus>
+    requestCode(email: string): Promise<AuthRequestResult>
+    verifyCode(code: string): Promise<AuthVerifyResult>
+    /** Leaves the code step to use another email. */
+    cancel(): Promise<AuthStatus>
+    signOut(): Promise<AuthStatus>
   }
   achievements: {
     /** Shows a preview notification for a theme (the current one if omitted). No task is created. */
