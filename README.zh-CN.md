@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Mem0ryPool/activra-desktop/releases/tag/v1.0.0-rc.4"><strong>⬇ 下载 Windows 预览版 1.0.0-rc.4</strong></a>
+  <a href="https://github.com/Mem0ryPool/activra-desktop/releases/tag/v1.0.0-rc.4"><strong>⬇ 下载 Windows 预览版 1.0.0-rc.4</strong></a> · <a href="https://activra.pages.dev/"><strong>🌐 官方网站</strong></a>
 </p>
 
 <p align="center">

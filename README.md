@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Mem0ryPool/activra-desktop/releases/tag/v1.0.0-rc.4"><strong>⬇ Download the Windows preview 1.0.0-rc.4</strong></a>
+  <a href="https://github.com/Mem0ryPool/activra-desktop/releases/tag/v1.0.0-rc.4"><strong>⬇ Download the Windows preview 1.0.0-rc.4</strong></a> · <a href="https://activra.pages.dev/"><strong>🌐 Official Website</strong></a>
 </p>
 
 <p align="center">
