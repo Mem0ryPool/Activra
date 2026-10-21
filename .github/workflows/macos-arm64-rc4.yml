@@ -1,0 +1,222 @@
+name: macOS ARM64 RC4 preview
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/macos-arm64-rc4.yml
+      - build/**
+      - electron-builder.yml
+      - package.json
+      - package-lock.json
+      - scripts/**
+      - src/**
+      - tests/**
+      - tsconfig*.json
+      - vite.config.*
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-arm64-rc4-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-smoke-test:
+    name: Build and smoke-test unsigned ARM64 DMG
+    runs-on: macos-14
+    timeout-minutes: 45
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      RC_VERSION: 1.0.0-rc.4
+      RC_TAG_COMMIT: 120b02cdb5b24d73aeda5aba58cf964073f6cea2
+      DMG_PATH: release/1.0.0-rc.4/Activra-1.0.0-rc.4-arm64.dmg
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22.23.3
+          package-manager-cache: false
+
+      - name: Confirm Apple Silicon runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = "arm64"
+          test "$(node -p 'process.arch')" = "arm64"
+
+      - name: Confirm frozen RC4 application source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse 'v1.0.0-rc.4^{commit}')" = "$RC_TAG_COMMIT"
+          test "$(node -p "require('./package.json').version")" = "$RC_VERSION"
+          git diff --exit-code "$RC_TAG_COMMIT" -- . \
+            ':(exclude).github/**' \
+            ':(exclude)BRANDING.md' \
+            ':(exclude)README*' \
+            ':(exclude)SECURITY.md' \
+            ':(exclude)docs/**'
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run static and unit checks
+        run: |
+          npm run typecheck
+          npm run lint
+          npm test
+
+      - name: Build unsigned ARM64 DMG
+        run: npm run dist:mac:arm64 -- --publish never
+
+      - name: Verify, install, launch, and restart the packaged app
+        id: verify
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          test -f "$DMG_PATH"
+          dmg_list="$(find "release/$RC_VERSION" -maxdepth 1 -type f -name '*.dmg' -print)"
+          test "$(printf '%s\n' "$dmg_list" | grep -c .)" -eq 1
+          test "$dmg_list" = "$DMG_PATH"
+
+          sha256="$(shasum -a 256 "$DMG_PATH" | awk '{print $1}')"
+          size_bytes="$(stat -f '%z' "$DMG_PATH")"
+          printf '%s  %s\n' "$sha256" "$(basename "$DMG_PATH")" > "release/$RC_VERSION/SHA256SUMS-macOS-ARM64.txt"
+
+          mount_dir="$RUNNER_TEMP/activra-dmg"
+          install_dir="$RUNNER_TEMP/Applications"
+          profile_dir="$RUNNER_TEMP/activra-profile"
+          mkdir -p "$mount_dir" "$install_dir" "$profile_dir"
+          mounted=0
+          cleanup() {
+            if [[ "$mounted" -eq 1 ]]; then
+              hdiutil detach "$mount_dir" -quiet || true
+            fi
+          }
+          trap cleanup EXIT
+
+          hdiutil attach "$DMG_PATH" -readonly -nobrowse -mountpoint "$mount_dir"
+          mounted=1
+          source_app="$mount_dir/Activra.app"
+          test -d "$source_app"
+          test -L "$mount_dir/Applications"
+          test "$(readlink "$mount_dir/Applications")" = "/Applications"
+
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$source_app/Contents/Info.plist")"
+          bundle_name="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleName' "$source_app/Contents/Info.plist")"
+          bundle_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$source_app/Contents/Info.plist")"
+          executable="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$source_app/Contents/Info.plist")"
+          test "$bundle_id" = "app.lifeunlocked.desktop"
+          test "$bundle_name" = "Activra"
+          test -n "$bundle_version"
+
+          source_binary="$source_app/Contents/MacOS/$executable"
+          test -x "$source_binary"
+          test "$(lipo -archs "$source_binary")" = "arm64"
+
+          codesign_output="$RUNNER_TEMP/codesign.txt"
+          set +e
+          codesign -dvvv "$source_app" >"$codesign_output" 2>&1
+          codesign_status=$?
+          set -e
+          if grep -Eq 'Authority=Developer ID|TeamIdentifier=[A-Z0-9]{10}' "$codesign_output"; then
+            echo "Unexpected Developer ID signature on the unsigned preview" >&2
+            cat "$codesign_output" >&2
+            exit 1
+          fi
+
+          set +e
+          stapler_output="$(xcrun stapler validate "$DMG_PATH" 2>&1)"
+          stapler_status=$?
+          spctl_output="$(spctl --assess --type execute -vv "$source_app" 2>&1)"
+          spctl_status=$?
+          set -e
+          printf '%s\n' "$stapler_output"
+          printf '%s\n' "$spctl_output"
+          if [[ "$stapler_status" -eq 0 ]]; then
+            echo "Unexpected notarization ticket on the unnotarized preview" >&2
+            exit 1
+          fi
+
+          installed_app="$install_dir/Activra.app"
+          ditto "$source_app" "$installed_app"
+          hdiutil detach "$mount_dir" -quiet
+          mounted=0
+
+          installed_binary="$installed_app/Contents/MacOS/$executable"
+          export ACTIVRA_EXECUTABLE="$installed_binary"
+          export ACTIVRA_PROFILE="$profile_dir"
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict'
+          import { readFile } from 'node:fs/promises'
+          import path from 'node:path'
+          import { _electron as electron } from '@playwright/test'
+
+          const executablePath = process.env.ACTIVRA_EXECUTABLE
+          const profile = process.env.ACTIVRA_PROFILE
+          assert.ok(executablePath)
+          assert.ok(profile)
+
+          const launch = async () => {
+            const app = await electron.launch({
+              executablePath,
+              env: { ...process.env, LIFE_UNLOCKED_USER_DATA: profile }
+            })
+            const page = await app.firstWindow()
+            await page.waitForSelector('nav')
+            return { app, page }
+          }
+
+          const first = await launch()
+          assert.equal(await first.app.evaluate(({ app }) => app.getName()), 'Activra')
+          assert.equal(await first.app.evaluate(({ app }) => app.getVersion()), '1.0.0-rc.4')
+          assert.equal(await first.app.evaluate(({ app }) => app.getPath('userData')), profile)
+          await first.page.evaluate(() => window.lifeUnlocked.settings.update({ language: 'en' }))
+          await first.app.close()
+
+          const dataFile = path.join(profile, 'life-unlocked-data.json')
+          const saved = JSON.parse(await readFile(dataFile, 'utf8'))
+          assert.equal(saved.schemaVersion, 5)
+          assert.equal(saved.settings.language, 'en')
+
+          const second = await launch()
+          const settings = await second.page.evaluate(() => window.lifeUnlocked.settings.get())
+          assert.equal(settings.language, 'en')
+          await second.app.close()
+          NODE
+
+          {
+            echo "### macOS ARM64 RC4 preview"
+            echo "- Runner architecture: \`$(uname -m)\`"
+            echo "- Bundle: \`$bundle_id\` / \`$bundle_name\` / \`$bundle_version\`"
+            echo "- Executable architectures: \`$(lipo -archs "$installed_binary")\`"
+            echo "- DMG size: \`$size_bytes\` bytes"
+            echo "- DMG SHA-256: \`$sha256\`"
+            echo "- Developer ID signature: not detected (codesign inspection exit \`$codesign_status\`)"
+            echo "- Notarization ticket: not present (stapler exit \`$stapler_status\`)"
+            echo "- Gatekeeper assessment exit code: \`$spctl_status\`"
+            echo "- Smoke check: copied from DMG, launched twice, and retained a saved setting"
+            echo "- Scope: CI evidence only; no notarization and no physical-Mac acceptance claim"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload DMG and checksum as workflow artifacts
+        id: upload
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Activra-${{ env.RC_VERSION }}-macOS-arm64-${{ github.sha }}
+          path: |
+            ${{ env.DMG_PATH }}
+            release/${{ env.RC_VERSION }}/SHA256SUMS-macOS-ARM64.txt
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14

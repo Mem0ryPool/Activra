@@ -1,8 +1,14 @@
 # macOS compatibility (preparation)
 
-Status: an earlier ARM64 development build was reported running on a real Mac, but no DMG from the
-1.0.0-rc.4 preparation source has been built or verified on macOS. No final RC4 freeze commit exists yet. A real-Mac
-build and manual acceptance pass are still required before a macOS release.
+Status: `v1.0.0-rc.4` is the frozen public RC4 source tag, and the published RC4 release currently contains
+only the unsigned Windows x64 preview. `.github/workflows/macos-arm64-rc4.yml` builds an unsigned ARM64 DMG
+from the same RC4 application source on GitHub's `macos-14` Apple Silicon runner. It uploads only a workflow
+artifact for review; it does not change the tag or publish a GitHub Release asset.
+
+The workflow checks the runner and executable architecture, bundle identity, executable permissions, DMG
+layout, SHA-256 and byte size. It then copies the app from the mounted DMG, launches the packaged app twice
+with an isolated temporary profile, and checks that a saved setting survives the restart. This is useful CI
+evidence, but it does not reproduce a downloaded file's quarantine state or replace physical-Mac acceptance.
 
 ## Already in place
 
@@ -23,19 +29,20 @@ build and manual acceptance pass are still required before a macOS release.
   instead of tray / Windows (`*Mac` i18n keys).
 - Dock: a development run sets the Activra icon on the Dock (the installed app takes it from the bundle).
 - Fonts fall back to `-apple-system` / PingFang SC; the achievement notification window has a macOS branch.
-- Build config: `mac` in `electron-builder.yml` makes unsigned DMGs for arm64 and x64 from `build/icon.png`
-  (`identity: null`, `publish: null`). Windows settings are unchanged.
+- Build config: `mac` in `electron-builder.yml` declares arm64 and x64 DMG targets from `build/icon.png`
+  (`identity: null`, `publish: null`). The RC4 preview workflow passes `--arm64`, verifies that only one ARM64
+  DMG was produced, and never uploads an Intel build. Windows settings are unchanged.
 - DMG window: `dmg` in `electron-builder.yml` uses `build/dmg-background.png` (+ `@2x`, 540×380) with the
   app at (140, 200) and an Applications link at (400, 200), icon size 96, and the volume icon
   `build/icon.icns`; all three come from the approved SVG via `scripts/generate-dmg-assets.mjs`.
 
-## Still to do (needs a Mac or an Apple account)
+## Still to do before a public macOS release
 
-1. Build on macOS (`npm run dist:mac:arm64` for Apple silicon) and run the E2E suite there;
-   `shortcut.spec.ts` skips its Windows-label test on macOS.
+1. Review a successful `macOS ARM64 RC4 preview` workflow run and retain its artifact hash and run URL. A
+   cloud runner is automated build evidence, not a claim that the app was accepted on a physical Mac.
 2. Menu bar (tray) icon: macOS expects a monochrome template image; the current colored tray PNGs show as
    color. Add a template variant in `scripts/generate-app-icons.mjs` and use `setTemplateImage(true)`.
-3. Signing and notarization (Developer ID, hardened runtime, entitlements). Unsigned builds need
-   right-click → Open on first launch.
+3. Signing and notarization (Developer ID, hardened runtime, entitlements). The preview has no Developer ID
+   signature or notarization, so Gatekeeper may block normal first launch of a downloaded copy.
 4. Check the notification window across Spaces / full-screen apps, and the close-to-menu-bar behavior.
 5. Manual check of the Select popovers, dialogs and focus mode with the traffic lights at 100 % and Retina.
