@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Mem0ryPool/activra-desktop/releases/tag/v1.0.0-rc.4"><strong>⬇ 下载 Windows 预览版 1.0.0-rc.4</strong></a>
+  <a href="https://github.com/Mem0ryPool/Activra/releases/tag/v1.0.0-rc.4"><strong>⬇ 下载 Windows 预览版 1.0.0-rc.4</strong></a> · <a href="https://activra.pages.dev/"><strong>🌐 官方网站</strong></a>
 </p>
 
 <p align="center">
@@ -53,7 +53,7 @@ Activra 是一款离线优先的桌面效率应用。用自己的话写下目标
 
 | 项目 | 内容 |
 | --- | --- |
-| 版本 | [1.0.0-rc.4（Windows 预览版，pre-release）](https://github.com/Mem0ryPool/activra-desktop/releases/tag/v1.0.0-rc.4) |
+| 版本 | [1.0.0-rc.4（Windows 预览版，pre-release）](https://github.com/Mem0ryPool/Activra/releases/tag/v1.0.0-rc.4) |
 | 系统 | Windows 10 / 11，x64 |
 | 文件 | `Activra-Setup-1.0.0-rc.4-x64.exe`（约 107 MB） |
 | SHA-256 | `9809f3b45330a520c6fc589707931b80220a7e1f4679061afbe7eedd32f80492` |
@@ -103,7 +103,7 @@ Windows 与 macOS 构建说明分别见 [docs/windows-release.md](docs/windows-r
 
 ## 反馈
 
-遇到问题或有建议，欢迎在 [GitHub Issues](https://github.com/Mem0ryPool/activra-desktop/issues) 中告诉我们。提交前请先搜索是否已有相同问题，并附上 Windows 版本、Activra 版本和复现步骤。请不要在 Issue 中粘贴你的数据文件或个人信息；安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。
+遇到问题或有建议，欢迎在 [GitHub Issues](https://github.com/Mem0ryPool/Activra/issues) 中告诉我们。提交前请先搜索是否已有相同问题，并附上 Windows 版本、Activra 版本和复现步骤。请不要在 Issue 中粘贴你的数据文件或个人信息；安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。
 
 ## 参与贡献
 

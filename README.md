@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Mem0ryPool/activra-desktop/releases/tag/v1.0.0-rc.4"><strong>⬇ Download the Windows preview 1.0.0-rc.4</strong></a>
+  <a href="https://github.com/Mem0ryPool/Activra/releases/tag/v1.0.0-rc.4"><strong>⬇ Download the Windows preview 1.0.0-rc.4</strong></a> · <a href="https://activra.pages.dev/"><strong>🌐 Official Website</strong></a>
 </p>
 
 <p align="center">
@@ -53,7 +53,7 @@ These are real desktop app screenshots taken with isolated test data and left un
 
 | Item | Details |
 | --- | --- |
-| Version | [1.0.0-rc.4 (Windows preview, pre-release)](https://github.com/Mem0ryPool/activra-desktop/releases/tag/v1.0.0-rc.4) |
+| Version | [1.0.0-rc.4 (Windows preview, pre-release)](https://github.com/Mem0ryPool/Activra/releases/tag/v1.0.0-rc.4) |
 | System | Windows 10 / 11, x64 |
 | File | `Activra-Setup-1.0.0-rc.4-x64.exe` (about 107 MB) |
 | SHA-256 | `9809f3b45330a520c6fc589707931b80220a7e1f4679061afbe7eedd32f80492` |
@@ -103,7 +103,7 @@ Tests and contributions must use synthetic data or isolated directories. Do not 
 
 ## Feedback
 
-Found a problem or have an idea? Tell us in [GitHub Issues](https://github.com/Mem0ryPool/activra-desktop/issues). Please search for an existing issue first, and include your Windows version, Activra version and steps to reproduce. Do not paste your data file or personal information into an issue; report security problems privately as described in [SECURITY.md](SECURITY.md).
+Found a problem or have an idea? Tell us in [GitHub Issues](https://github.com/Mem0ryPool/Activra/issues). Please search for an existing issue first, and include your Windows version, Activra version and steps to reproduce. Do not paste your data file or personal information into an issue; report security problems privately as described in [SECURITY.md](SECURITY.md).
 
 ## Contributing
 
